@@ -1,0 +1,14 @@
+--use-constant-vecs
+true
+--aggregation
+vertex_centric
+--coarse-size
+100
+--num-levels
+3
+--strength
+visibility
+--smoother
+sor
+--cycle
+wcycle

@@ -1,0 +1,4 @@
+-eps_hermitian
+-eps_monitor
+-eps_largest_magnitude
+-eps_nev 5

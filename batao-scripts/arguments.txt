@@ -1,0 +1,14 @@
+-fieldsplit_camera_ksp_type cg
+-fieldsplit_camera_mat_schur_complement_ainv_type blockdiag
+-fieldsplit_camera_pc_type pbjacobi
+-fieldsplit_point_ksp_type preonly
+-fieldsplit_point_pc_type pbjacobi
+-ksp_diagonal_scale
+-ksp_diagonal_scale_fix
+-ksp_type preonly
+-pc_fieldsplit_schur_precondition selfp
+-pc_fieldsplit_type schur
+-pc_type fieldsplit
+-tao_max_it 10
+-tao_trust0 1e4
+-tao_type lm

@@ -1,0 +1,4 @@
+--smoother
+bjacobi
+--max-agg-size
+8

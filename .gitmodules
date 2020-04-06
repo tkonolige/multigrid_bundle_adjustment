@@ -1,0 +1,30 @@
+[submodule "bamg"]
+	path = bamg
+	url = git@gitlab.com:tkonolige/bundle-adjustment-multigrid.git
+[submodule "IterativeSolvers.jl"]
+	path = IterativeSolvers.jl
+	url = git@github.com:tkonolige/IterativeSolvers.jl.git
+[submodule "petsc"]
+	path = petsc
+	url = https://gitlab.com/tkonolige/petsc.git
+[submodule "slepc"]
+	path = slepc
+	url = git@gitlab.com:slepc/slepc.git
+[submodule "Arpack.jl"]
+	path = Arpack.jl
+	url = git@github.com:tkonolige/Arpack.jl.git
+[submodule "BALUtils"]
+	path = BALUtils
+	url = git@github.com:tkonolige/BALUtils.jl.git
+[submodule "ba-tao"]
+	path = ba-tao
+	url = https://gitlab.com/tkonolige/ba-tao.git
+[submodule "ceres-solver"]
+	path = ceres-solver
+	url = git@github.com:tkonolige/ceres-solver.git
+[submodule "city2ba"]
+	path = city2ba
+	url = git@github.com:tkonolige/city2ba.git
+[submodule "StaticArrays.jl"]
+	path = StaticArrays.jl
+	url = git@github.com:tkonolige/StaticArrays.jl.git

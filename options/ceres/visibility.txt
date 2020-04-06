@@ -1,0 +1,5 @@
+--cluster_jacobi
+--eta
+0.1
+--num_iter
+100

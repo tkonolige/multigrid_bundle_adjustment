@@ -1,0 +1,12 @@
+--use-constant-vecs
+true
+--aggregation
+vertex_centric
+--num-levels
+3
+--coarse-size
+1
+--strength
+visibility
+--cycle
+fcycle

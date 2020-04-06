@@ -1,0 +1,6 @@
+--cluster_jacobi
+--eta
+0.01
+--num_iter
+100
+--robust

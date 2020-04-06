@@ -1,0 +1,6 @@
+--convergence
+nash
+--tol
+0.1
+--maxiter
+100

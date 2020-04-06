@@ -1,0 +1,10 @@
+--use-constant-vecs
+false
+--aggregation
+vertex_centric
+--num-levels
+2
+--coarse-size
+1
+--strength
+visibility

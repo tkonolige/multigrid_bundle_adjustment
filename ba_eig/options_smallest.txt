@@ -1,0 +1,10 @@
+-eps_hermitian
+-eps_monitor
+-eps_target 0
+-st_type sinvert
+-st_ksp_type cg
+-st_pc_type pbjacobi
+-matload_block_size 9
+-st_ksp_converged_reason
+-eps_nev 10
+-st_ksp_max_it 50000

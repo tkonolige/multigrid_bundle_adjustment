@@ -21,7 +21,7 @@ baloutput f = [ "-fieldsplit_camera_ksp_view_solution"
               ]
 
 bamgProject = do
-  getDirectoryFiles "" ["bamg//*.jl", "bamg/Project.toml"]
+  getDirectoryFiles "" ["bamg//*.jl", "bamg/Project.toml"] >>= need
   need ["bamg/Manifest.toml"]
 
 main :: IO ()
@@ -45,12 +45,13 @@ main = shakeArgs shakeOptions{shakeFiles="_shake", shakeChange=ChangeModtimeAndD
       bamgProject
       cmd_ "cmake --build" [takeDirectory $ takeDirectory out] "-- -j 4"
 
-    "ba-problems/*.problem/*_noised.bbal" %> \out -> do
+    "ba-problems/*.problem/problem_noised.bbal" %> \out -> do
       let infile = (dropFileName out) </> "problem.bbal"
-      srcs <- getDirectoryFiles "" ["city2bal/src//*.rs", "city2bal/Cargo.toml"]
+      srcs <- getDirectoryFiles "" ["city2ba/src//*.rs", "city2ba/Cargo.toml"]
       need srcs
+      need [infile]
       lines <- readFileLines $ (dropFileName out) </> "noise.txt"
-      cmd_ (Cwd "city2bal") (AddEnv "EMBREE_DIR" "/ust/local/opt/embree") "cargo run --release --bin noise" (map (\x -> ".." </> x) [infile, out]) lines
+      cmd_ (Cwd "city2ba") (AddEnv "EMBREE_DIR" "/ust/local/opt/embree") "cargo run --release --bin city2ba noise" (map (\x -> ".." </> x) [infile, out]) lines
 
     (map (\f -> "ba-problems/*.problem" </> f) bafiles) &%> \outfiles -> do
       let bin = "ba-tao/build/bin/CeresBundleAdjustment"
@@ -101,11 +102,31 @@ main = shakeArgs shakeOptions{shakeFiles="_shake", shakeChange=ChangeModtimeAndD
             "largest" -> True
             "smallest" -> False
       let problem = dropDirectory1 $ dropFileName out
-      let matrix = (dropFileName out) </> "S.petsc"
+      let matrix = (dropFileName out) </> "default_dump.h5"
       need [matrix]
       let options = "ba_eig/options_" <> slargest <.> "txt"
       need [options]
-      cmd_ "ba_eig/build/ba_eig -H" [matrix] (if largest then "-eps_largest_magnitude" else "-eps_smallest_magnitude") "-out" out "-index" index "-options_file" [options]
+      let bafile = (dropFileName out) </> "problem_noised.bbal"
+      need [bafile]
+      bamgProject
+      let smopts = if not largest then ["-bafile", bafile] else []
+      cmd_ "ba_eig/build/ba_eig -hdf5" [matrix] "-out" out "-index" index "-options_file" [options] smopts "-bdscale"
+
+    "ba-problems/*.problem/condition_number_*.csv" %> \out -> do
+      let dir = dropFileName out
+      let Just [problem, index] = filePattern "ba-problems/*.problem/condition_number_*.csv" out
+      let largest = dir </> "eig_" <> index <> "_largest.h5"
+      let smallest = dir </> "eig_" <> index <> "_smallest.h5"
+      need [largest, smallest]
+      cmd_ "julia cond.jl" [smallest, largest, out]
+
+    "ba-problems/*.problem/gt_condition_number.csv" %> \out -> do
+      let dir = dropFileName out
+      let Just [problem] = filePattern "ba-problems/*.problem/gt_condition_number.csv" out
+      let largest = dir </> "gt_eig_largest.h5"
+      let smallest = dir </> "gt_eig_smallest.h5"
+      need [largest, smallest]
+      cmd_ "julia cond.jl" [smallest, largest, out]
 
     ["ba-problems/*.problem/bamg_*_*_P.petsc", "ba-problems/*.problem/bamg_*_*_S.petsc"] &%> \[out, strength] -> do
       bamgProject
@@ -151,33 +172,77 @@ main = shakeArgs shakeOptions{shakeFiles="_shake", shakeChange=ChangeModtimeAndD
       let bin = "ba-tao/build/bin/CeresBundleAdjustment"
       let Just [_, opts] = filePattern "ba-problems/*.problem/ceres_benchmark_*.csv" out
       lines <- readFileLines $ "options/ceres" </> opts <.> "txt"
+      bamgProject
       need [bin, balproblem]
       cmd_ [bin] "--bal" [balproblem] lines "--csv" [out]
+
+    "ba-problems/*.problem/gt_benchmark_*.csv" %> \out -> do
+      let balproblem = (dropFileName out) </> "problem.bbal"
+      let bin = "ba-tao/build/bin/CeresBundleAdjustment"
+      let Just [_, opts] = filePattern "ba-problems/*.problem/gt_benchmark_*.csv" out
+      lines <- readFileLines $ "options/ceres" </> opts <.> "txt"
+      bamgProject
+      need [bin, balproblem]
+      cmd_ [bin] "--bal" [balproblem] lines "--csv" [out] "--no-damping --num_iter 1 --abstol -1 --random_rhs --rtol 1e-3"
 
     "ba-problems/*.problem/multigrid_benchmark_*.csv" %> \out -> do
       let balproblem = (dropFileName out) </> "problem_noised.bbal"
       let bin = "ba-tao/build/bin/CeresBundleAdjustment"
       let Just [_, opts] = filePattern "ba-problems/*.problem/multigrid_benchmark_*.csv" out
-      lines <- readFileLines "options/ceres/multigrid.txt"
+      lines <- readFileLines "options/ceres/multigrid_robust01.txt"
       let optsfile = "options/ceres/multigrid" </> opts <.> "txt"
+      bamgProject
       need [bin, balproblem, optsfile]
       cmd_ [bin] "--bal" [balproblem] lines "--csv" [out] "--options_file" [optsfile]
 
     "ba-problems/*.problem/*.ply" %> \out -> do
       let balproblem = (dropExtension out) <.> ".bbal"
-      srcs <- getDirectoryFiles "" ["city2bal/src//*.rs", "city2bal/Cargo.toml"]
+      srcs <- getDirectoryFiles "" ["city2ba/src//*.rs", "city2ba/Cargo.toml"]
       need srcs
       need [balproblem]
-      cmd_ (Cwd "city2bal") (AddEnv "EMBREE_DIR" "/ust/local/opt/embree") "cargo run --release --bin bal2ply" (map (\x -> ".." </> x) [balproblem, out])
+      cmd_ (Cwd "city2ba") (AddEnv "EMBREE_DIR" "/ust/local/opt/embree") "cargo run --release --bin city2ba ply" (map (\x -> ".." </> x) [balproblem, out])
 
     "ba-problems/*.problem/*_dump.h5" %> \out -> do
       let balproblem = (dropFileName out) </> "problem_noised.bbal"
       let bin = "ba-tao/build/bin/CeresBundleAdjustment"
-      let Just [_, opts] = filePattern "ba-problems/*.problem/*_dump.h5" out
       lines <- readFileLines "options/ceres/multigrid.txt"
+      let Just [_, opts] = filePattern "ba-problems/*.problem/*_dump.h5" out
       let optsfile = "options/ceres/multigrid" </> opts <.> "txt"
       need [bin, balproblem, optsfile]
-      cmd_ [bin] "--bal" [balproblem] lines "--options_file" [optsfile] "--dump_file" [out]
+      bamgProject
+      cmd_ [bin] "--bal" [balproblem] lines "--options_file" [optsfile] "--dump_file" [out] "--robust --num_iter 10"
+
+    "ba-problems/*.problem/dump_gt.h5" %> \out -> do
+      let balproblem = (dropFileName out) </> "problem.bbal"
+      let bin = "ba-tao/build/bin/CeresBundleAdjustment"
+      lines <- readFileLines "options/ceres/multigrid.txt"
+      let optsfile = "options/ceres/multigrid/default.txt"
+      need [bin, balproblem, optsfile]
+      bamgProject
+      cmd_ [bin] "--bal" [balproblem] lines "--options_file" [optsfile] "--dump_file" [out] "--num_iter 1 --no_damping"
+
+    "ba-problems/*.problem/gt_eig_*.h5" %> \out -> do
+      need ["ba_eig/build/ba_eig"]
+      let Just [problem, slargest] = filePattern "ba-problems/*.problem/gt_eig_*.h5" out
+      let largest = case slargest of
+            "largest" -> True
+            "smallest" -> False
+      let problem = dropDirectory1 $ dropFileName out
+      let matrix = (dropFileName out) </> "dump_gt.h5"
+      need [matrix]
+      let options = "ba_eig/options_" <> slargest <.> "txt"
+      need [options]
+      let bafile = (dropFileName out) </> "problem.bbal"
+      need [bafile]
+      bamgProject
+      let smopts = if not largest then ["-bafile", bafile] else []
+      cmd_ "ba_eig/build/ba_eig -hdf5" [matrix] "-out" out "-index 1" "-options_file" [options] smopts "-nullspace"
+
+    "ba-problems/*.problem/diameter.csv" %> \out -> do
+      let balproblem = (dropFileName out) </> "problem_noised.bbal"
+      let bin = "diameter.jl"
+      need [bin, balproblem]
+      cmd_ "julia" [bin, balproblem, out]
 
     "ba-problems/bal-*/ceres_benchmark_*.csv" %> \out -> do
       let balproblem = (dropFileName out) </> "problem.bal"
@@ -185,4 +250,11 @@ main = shakeArgs shakeOptions{shakeFiles="_shake", shakeChange=ChangeModtimeAndD
       let Just [_, opts] = filePattern "ba-problems/*/ceres_benchmark_*.csv" out
       lines <- readFileLines $ "options/ceres" </> opts <.> "txt"
       need [bin, balproblem]
+      bamgProject
       cmd_ [bin] "--bal" [balproblem] lines "--csv" [out]
+
+    "ba-problems/*_block_drift.problem/problem.bbal" %> \out -> do
+      srcs <- getDirectoryFiles "" ["city2ba/src//*.rs", "city2ba/Cargo.toml"]
+      let Just [blocks] = filePattern "ba-problems/*_block_drift.problem/problem.bbal" out
+      need srcs
+      cmd_ (Cwd "city2ba") (AddEnv "EMBREE_DIR" "/ust/local/opt/embree") "cargo run --release --bin city2ba synthetic" (map (\x -> ".." </> x) [out]) "--blocks" [blocks]

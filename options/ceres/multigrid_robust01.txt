@@ -1,0 +1,6 @@
+--eta
+0.01
+--multigrid
+--num_iter
+100
+--robust
