@@ -1,5 +1,7 @@
 #!/bin/bash -ex
 
+git submodule update --init --recursive
+
 export PETSC_DIR=$(pwd)/petsc
 export PETSC_ARCH=arch-opt
 export SLEPC_DIR=$(pwd)/slepc
