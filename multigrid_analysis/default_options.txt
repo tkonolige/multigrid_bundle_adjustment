@@ -1,0 +1,4 @@
+-eps_smallest_magnitude
+-eps_monitor
+-eps_max_it 1000
+-eps_type lapack
