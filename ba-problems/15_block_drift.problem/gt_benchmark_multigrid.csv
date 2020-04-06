@@ -1,0 +1,2 @@
+problem,solver,cost,cost_change,gradient_norm,step_norm,damping,iters,setup_time,solve_time,iter_time,eta,cameras,points,flops,loss,hostname
+0,multigrid,2.24982e-29,0,4.84057e-14,0,0.0001,0,0,0,0.0953431,0.1,4470,26524,0,none,sparrowhawk

@@ -1,0 +1,3 @@
+problem,solver,cost,cost_change,gradient_norm,step_norm,damping,iters,setup_time,solve_time,iter_time,eta,cameras,points,flops,loss,hostname
+0,visibility,3.9461e-29,0,7.81597e-14,0,0.0001,0,0,0,0.168637,0.1,7960,47368,0,none,sparrowhawk
+1,visibility,3.9461e-29,0,7.81597e-14,0,0.0002,100000,136.26,1995.1,2131.41,0.1,7960,47368,2809852135740,none,sparrowhawk

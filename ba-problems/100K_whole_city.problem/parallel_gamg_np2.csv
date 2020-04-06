@@ -1,0 +1,2 @@
+problem,solver,cost,gradient_norm_l2,damping,iters,cumulative_inner_solve_time,eta,cameras,points,cumulative_inner_solve_flops,loss,cumulative_solve_time,cumulative_solve_flops,nodes
+0,gamg,25.3343,5909.16,0.0001,0,0,0.01,98925,273524,0,huber,0,0,8

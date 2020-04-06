@@ -1,0 +1,6 @@
+--drift-strength
+0.00000001
+--drift-angle
+0.000000001
+--rotation-std
+0.00000001

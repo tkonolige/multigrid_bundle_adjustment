@@ -51,7 +51,7 @@ main = shakeArgs shakeOptions{shakeFiles="_shake", shakeChange=ChangeModtimeAndD
       need srcs
       need [infile]
       lines <- readFileLines $ (dropFileName out) </> "noise.txt"
-      cmd_ (Cwd "city2ba") (AddEnv "EMBREE_DIR" "/ust/local/opt/embree") "cargo run --release --bin city2ba noise" (map (\x -> ".." </> x) [infile, out]) lines
+      cmd_ (Cwd "city2ba") "cargo run --release --bin city2ba noise" (map (\x -> ".." </> x) [infile, out]) lines
 
     (map (\f -> "ba-problems/*.problem" </> f) bafiles) &%> \outfiles -> do
       let bin = "ba-tao/build/bin/CeresBundleAdjustment"
@@ -200,7 +200,7 @@ main = shakeArgs shakeOptions{shakeFiles="_shake", shakeChange=ChangeModtimeAndD
       srcs <- getDirectoryFiles "" ["city2ba/src//*.rs", "city2ba/Cargo.toml"]
       need srcs
       need [balproblem]
-      cmd_ (Cwd "city2ba") (AddEnv "EMBREE_DIR" "/ust/local/opt/embree") "cargo run --release --bin city2ba ply" (map (\x -> ".." </> x) [balproblem, out])
+      cmd_ (Cwd "city2ba") "cargo run --release --bin city2ba ply" (map (\x -> ".." </> x) [balproblem, out])
 
     "ba-problems/*.problem/*_dump.h5" %> \out -> do
       let balproblem = (dropFileName out) </> "problem_noised.bbal"
@@ -257,4 +257,4 @@ main = shakeArgs shakeOptions{shakeFiles="_shake", shakeChange=ChangeModtimeAndD
       srcs <- getDirectoryFiles "" ["city2ba/src//*.rs", "city2ba/Cargo.toml"]
       let Just [blocks] = filePattern "ba-problems/*_block_drift.problem/problem.bbal" out
       need srcs
-      cmd_ (Cwd "city2ba") (AddEnv "EMBREE_DIR" "/ust/local/opt/embree") "cargo run --release --bin city2ba synthetic" (map (\x -> ".." </> x) [out]) "--blocks" [blocks]
+      cmd_ (Cwd "city2ba") "cargo run --release --bin city2ba synthetic" (map (\x -> ".." </> x) [out]) "--blocks" [blocks]

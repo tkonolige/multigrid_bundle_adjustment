@@ -1,0 +1,2 @@
+*.bbal filter=lfs diff=lfs merge=lfs -text
+*.bal filter=lfs diff=lfs merge=lfs -text

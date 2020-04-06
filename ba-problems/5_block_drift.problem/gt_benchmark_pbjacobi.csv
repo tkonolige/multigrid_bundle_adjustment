@@ -1,0 +1,2 @@
+problem,solver,cost,cost_change,gradient_norm,step_norm,damping,iters,setup_time,solve_time,iter_time,eta,cameras,points,flops,loss,hostname
+0,pbjacobi_implicit,2.27575e-30,0,1.38147e-14,0,0.0001,0,0,0,0.013402,0.1,490,2842,0,none,ged.lan

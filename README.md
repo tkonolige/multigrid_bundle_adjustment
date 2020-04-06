@@ -37,8 +37,12 @@ With these installed, run `setup.bash` to build everything.
 
 `Build.hs` is a shake build file that can build everything and run tests. It requires `ghc` (the Haskell compiler) and the `shake` package to be installed (you can install it with `cabal install shake`). There are a variety of targets that it can build:
 
-- ba-problems/*/ceres_benchmark_pbjacobi.csv: collect results for the point block Jacobi preconditioner.
-- ba-problems/*/ceres_benchmark_visibility.csv: collect results for the visibility preconditioner.
-- ba-problems/*/ceres_benchmark_multigrid.csv: collect results for the multigrid preconditioner.
+- `ba-problems/*/ceres_benchmark_pbjacobi.csv`: collect results for the point block Jacobi preconditioner.
+- `ba-problems/*/ceres_benchmark_visibility.csv`: collect results for the visibility preconditioner.
+- `ba-problems/*/ceres_benchmark_multigrid.csv`: collect results for the multigrid preconditioner.
 
 You can list all targets by running `./build.sh -h`.
+
+## Datasets
+
+The `ba-problems` directory contains test datasets stored with git-lfs. To download the datasets, use `git lfs pull --exclude=`. You will need these datasets to run the preconditioner benchmarks.

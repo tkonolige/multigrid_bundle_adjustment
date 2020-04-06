@@ -1,0 +1,2 @@
+problem,cost,cost_change,gradient_norm,step_norm,damping,iters,setup_time,solve_time,iter_time,eta,cameras,points
+0,1.56956,0,31.6896,0,0.0001,0,0,0,0.278908,0.1,16175,6551

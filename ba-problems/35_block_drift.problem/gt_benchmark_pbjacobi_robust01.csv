@@ -1,0 +1,3 @@
+problem,solver,cost,cost_change,gradient_norm,step_norm,damping,iters,setup_time,solve_time,iter_time,eta,cameras,points,flops,loss,hostname
+0,pbjacobi_implicit,1.13958e-29,0,5.37348e-14,0,0.0001,0,0,0,0.270289,0.01,24423,48665,0,huber,ged.lan
+1,pbjacobi_implicit,2.80347e-26,-2.80233e-26,0,7.17974e-09,0.0002,6,0.172035,0.170469,0.515066,0.01,24423,48665,166300785,huber,ged.lan

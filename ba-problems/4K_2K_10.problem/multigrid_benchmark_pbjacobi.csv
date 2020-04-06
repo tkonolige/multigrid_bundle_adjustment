@@ -1,0 +1,2 @@
+problem,solver,cost,cost_change,gradient_norm,step_norm,damping,iters,setup_time,solve_time,iter_time,eta,cameras,points,flops
+0,multigrid,1.2107,0,39.8164,0,0.0001,0,0,0,0.0371981,0.1,4000,3322,0
