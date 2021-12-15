@@ -45,4 +45,4 @@ You can list all targets by running `./build.sh -h`.
 
 ## Datasets
 
-The `ba-problems` directory contains test datasets stored with git-lfs. To download the datasets, use `git lfs pull --exclude=`. You will need these datasets to run the preconditioner benchmarks.
+The `ba-problems` directory contains test datasets. Unfortunately they are too large to store on github. Contact me if you want access to them.
